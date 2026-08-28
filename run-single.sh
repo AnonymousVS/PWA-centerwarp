@@ -43,6 +43,9 @@ if [ -s "$TMP" ] && grep -q '<?php' "$TMP" && grep -q 'vision-cta' "$TMP" \
   chown "$USERNAME":"$USERNAME" "$MU_DIR/vision-cta.php" 2>/dev/null
   chmod 755 "$MU_DIR"; chmod 644 "$MU_DIR/vision-cta.php"
   echo "✅ วางไฟล์สำเร็จ: $MU_DIR/vision-cta.php"
+  # 🧹 purge LiteSpeed page cache ของบัญชี (ไม่งั้นเสิร์ฟ HTML แคชเก่าที่ฝังสคริปต์เดิม)
+  find "/home/$USERNAME/lscache" -mindepth 1 -delete 2>/dev/null
+  echo "🧹 purge LiteSpeed cache ของบัญชี $USERNAME แล้ว"
   echo "[$(date '+%F %T')] run-single | $DOMAIN | $WP_PATH" >> "$LOG_DIR/run-$(date '+%Y%m%d').log"
   echo ""
   echo "🎯 เปิดทดสอบ: https://$DOMAIN/  (ดูปุ่มลอยมุมขวา)"

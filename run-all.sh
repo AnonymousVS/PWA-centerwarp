@@ -45,7 +45,9 @@ process_domain() {
     chown "$USERNAME":"$USERNAME" "$MU_DIR" 2>/dev/null
     chown "$USERNAME":"$USERNAME" "$MU_DIR/vision-cta.php" 2>/dev/null
     chmod 755 "$MU_DIR"; chmod 644 "$MU_DIR/vision-cta.php"
-    log "✅ สำเร็จ: $WP_PATH"
+    # 🧹 purge LiteSpeed page cache ของบัญชี (สำคัญ! LiteSpeed แคช HTML ที่ฝังสคริปต์ inline ไว้ ถ้าไม่ purge เว็บจะเสิร์ฟตัวเก่า)
+    find "/home/$USERNAME/lscache" -mindepth 1 -delete 2>/dev/null
+    log "✅ สำเร็จ + purge cache: $WP_PATH"
   else
     rm -f "$TMP"
     log "❌ ดาวน์โหลดไม่สมบูรณ์ - ข้าม (ไฟล์เดิมไม่ถูกแตะ)"
