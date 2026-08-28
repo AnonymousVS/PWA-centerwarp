@@ -3,6 +3,7 @@
 Plugin Name: Vision CTA Install Button + Popup
 Description: ปุ่มลอย "ติดตั้งแอป" (แท็บทอง) + popup เด้งกลางจอชวนติดตั้ง → centerwarp — static 100% imunify-safe
 Version: 2.3
+Text Domain: vision-cta
 */
 if (!defined('ABSPATH')) { return; }
 
