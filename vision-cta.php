@@ -2,7 +2,7 @@
 /*
 Plugin Name: Vision CTA Install Button + Popup
 Description: ปุ่มลอย "ติดตั้งแอป" (แท็บทอง) + popup เด้งกลางจอชวนติดตั้ง → centerwarp — static 100% imunify-safe
-Version: 2.3
+Version: 2.4
 Text Domain: vision-cta
 */
 if (!defined('ABSPATH')) { return; }
@@ -17,7 +17,7 @@ $VISION_CTA = array(
     'popup_delay'    => 1200, // ms — หน่วงก่อนเด้ง (ให้หน้าโหลดก่อน)
     'installed_days' => 30,  // วัน — กดปุ่มติดตั้งแล้ว popup+bar เงียบกี่วัน (ถอน/เกินกำหนด = เด้งกลับ) · ⚠️เช็คได้แค่จากการกดปุ่ม
     'bar_enabled'    => true, // แถบชวนติดตั้งด้านบน
-    'bar_cooldown'   => 12,  // ชั่วโมง — ปิด bar แล้วไม่โผล่ซ้ำกี่ชม.
+    'bar_cooldown'   => 12,  // (ปิดใช้แล้ว v2.4) เดิม=ปิด bar แล้วไม่โผล่ซ้ำ 12ชม. · ตอนนี้ bar เหมือน popup: ยังไม่ติดตั้ง=โผล่ทุกครั้ง
 );
 
 add_action('wp_head', function () use ($VISION_CTA) {
@@ -163,9 +163,7 @@ add_action('wp_head', function () use ($VISION_CTA) {
   function buildBar() {
     if (!CFG.bar_enabled || document.getElementById('vc-bar')) return;
     try { var inst = +localStorage.getItem('vc_installed') || 0;
-      if (inst && Date.now() - inst < (CFG.installed_days || 30) * 86400000) return; } catch (e) {}
-    try { var bl = +localStorage.getItem('vc_bar_last') || 0;
-      if (Date.now() - bl < (CFG.bar_cooldown || 12) * 3600000) return; } catch (e) {}
+      if (inst && Date.now() - inst < (CFG.installed_days || 30) * 86400000) return; } catch (e) {}   // ⭐ ยังไม่ติดตั้ง = โชว์ bar ทุกครั้ง (ปิด X แล้วรีเฟรชกลับมา เหมือน popup) · เงียบเมื่อกดติดตั้ง
     var bar = document.createElement('div'); bar.id = 'vc-bar';
     bar.innerHTML = '<span class="vb-ic-img" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M17 1.01 7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"></path></svg></span>'
       + '<div class="vb-tx"><b>เพิ่มแอปไปหน้าจอโฮม</b><i>เข้าถึงสะดวก รวดเร็ว ไม่ต้องพิมพ์ลิงก์</i></div>'
@@ -173,8 +171,7 @@ add_action('wp_head', function () use ($VISION_CTA) {
       + '<button class="vb-x" type="button" aria-label="ปิด">&times;</button>';
     document.body.insertBefore(bar, document.body.firstChild);   // วางบนสุดในสายเนื้อหา (เลื่อนลงแล้วหายไป ไม่ทับ header)
     function closeBar() {
-      try { localStorage.setItem('vc_bar_last', String(Date.now())); } catch (e) {}
-      if (bar.parentNode) bar.parentNode.removeChild(bar);
+      if (bar.parentNode) bar.parentNode.removeChild(bar);   // ปิดเฉพาะครั้งนี้ (ไม่จำ) → รีเฟรชกลับมา เหมือน popup
     }
     bar.querySelector('.vb-x').addEventListener('click', closeBar);
     bar.querySelector('.vb-cta').addEventListener('click', markInstalled);
