@@ -2,7 +2,7 @@
 /*
 Plugin Name: Vision CTA Install Button + Popup
 Description: ปุ่มลอย "ติดตั้งแอป" (แท็บทอง) + popup เด้งกลางจอชวนติดตั้ง → centerwarp — static 100% imunify-safe
-Version: 2.6
+Version: 2.7
 Text Domain: vision-cta
 */
 if (!defined('ABSPATH')) { return; }
@@ -23,6 +23,18 @@ $VISION_CTA = array(
 add_action('wp_head', function () use ($VISION_CTA) {
     if (empty($VISION_CTA['enabled']) || empty($VISION_CTA['install_url'])) { return; }
     if (is_admin() || is_customize_preview()) { return; }   // ไม่โชว์ใน Customizer/หน้า admin (Customizer โหลดหน้าเว็บจริงใน iframe)
+
+    // เฟส 3: ต่อ &s=<โดเมนที่กำลังเปิดจริง> เพื่อรู้ว่าเว็บไหนดันยอดติดตั้ง
+    // ใช้ HTTP_HOST (โดเมนที่ผู้ใช้เปิดจริง ณ ตอนนั้น) ไม่ใช่ home_url → เว็บที่โคลนจากธีมมาสเตอร์
+    // จะรายงานโดเมนตัวเองอัตโนมัติ (mu-plugin ติดไปกับ .wpress · ไม่ต้องแก้รายเว็บ)
+    $vc_host = isset($_SERVER['HTTP_HOST']) ? strtolower((string) $_SERVER['HTTP_HOST']) : '';
+    $vc_host = preg_replace('/:.*$/', '', $vc_host);          // ตัด :port ทิ้ง
+    $vc_host = preg_replace('/[^a-z0-9.\-]/', '', $vc_host);  // เหลือเฉพาะอักขระโดเมน (กัน host spoof)
+    $vc_host = preg_replace('/^www\./', '', $vc_host);        // รวม www. กับ non-www เป็นตัวเดียว
+    if ($vc_host !== '') {
+        $VISION_CTA['install_url'] .= '&s=' . rawurlencode($vc_host);
+    }
+
     echo "\n<script data-no-optimize=\"1\" data-cfasync=\"false\">\n";
     echo 'window.__VISION_CTA=' . wp_json_encode($VISION_CTA) . ";\n";
     echo <<<'JS'
