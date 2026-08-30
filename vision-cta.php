@@ -2,7 +2,7 @@
 /*
 Plugin Name: Vision CTA Install Button + Popup
 Description: ปุ่มลอย "ติดตั้งแอป" (แท็บทอง) + popup เด้งกลางจอชวนติดตั้ง → centerwarp — static 100% imunify-safe
-Version: 2.4
+Version: 2.6
 Text Domain: vision-cta
 */
 if (!defined('ABSPATH')) { return; }
@@ -108,7 +108,7 @@ add_action('wp_head', function () use ($VISION_CTA) {
     + '#vc-bar .vb-ic-img svg{display:block;width:22px;height:22px;fill:currentColor}'
     + '#vc-bar .vb-tx{flex:1;min-width:0;color:#fff;line-height:1.2}'
     + '#vc-bar .vb-tx b{display:block;font-size:12.5px;font-weight:700}'
-    + '#vc-bar .vb-tx i{font-style:normal;font-size:10px;color:#b9c2d8}'
+    + '#vc-bar .vb-tx i{font-style:normal;font-size:13.5px;font-weight:500;color:#e8ebf3}'
     + '#vc-bar .vb-cta{position:relative;overflow:hidden;flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;line-height:1;transition:transform .15s ease,filter .15s ease;'
     + 'padding:7px 13px;border-radius:9px;font-family:inherit;font-weight:700;font-size:12px;color:#20140a;white-space:nowrap;'
     + 'background:linear-gradient(145deg,#f7d05c 0%,#d69a22 46%,#9c6727 100%);'
@@ -119,7 +119,7 @@ add_action('wp_head', function () use ($VISION_CTA) {
     + '#vc-bar .vb-x{flex:0 0 auto;background:0;border:0;color:#8b95ad;font-size:22px;line-height:1;cursor:pointer;padding:0 3px}'
     + '#vc-bar .vb-x:hover{color:#fff}'
     + '@media(max-width:600px){#vc-bar{padding:5px 9px;gap:7px}#vc-bar .vb-ic-img svg{width:20px;height:20px}'
-    + '#vc-bar .vb-tx b{font-size:11.5px}#vc-bar .vb-tx i{font-size:9.5px}#vc-bar .vb-cta{padding:6px 10px;font-size:11px}}'
+    + '#vc-bar .vb-tx b{font-size:11.5px}#vc-bar .vb-tx i{font-size:12.5px}#vc-bar .vb-cta{padding:6px 10px;font-size:11px}}'
     + '@media(prefers-reduced-motion:reduce){#vc-install,#vc-install::after,.vc-pop-cta,.vc-pop-cta::after,#vc-bar .vb-cta::after{animation:none}#vc-bar{transition:none}}';
 
   function injectCSS() {
