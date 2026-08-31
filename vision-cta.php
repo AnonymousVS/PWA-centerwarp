@@ -2,7 +2,7 @@
 /*
 Plugin Name: Vision CTA Install Button + Popup
 Description: ปุ่มลอย "ติดตั้งแอป" (แท็บทอง) + popup เด้งกลางจอชวนติดตั้ง → centerwarp — static 100% imunify-safe
-Version: 2.7
+Version: 2.8
 Text Domain: vision-cta
 */
 if (!defined('ABSPATH')) { return; }
@@ -111,6 +111,13 @@ add_action('wp_head', function () use ($VISION_CTA) {
     + '.vc-pop-later{display:block;margin:13px auto 2px;background:0;border:0;color:#9fb0d8;font-size:.86rem;cursor:pointer;font-family:inherit}'
     + '.vc-pop-later:hover{color:#fff}'
     + '#vc-pop-card .vc-pop-note{margin:11px 0 0;font-size:.72rem;color:#8b95ad;line-height:1.45}'
+    // ---- โล่รับรองความปลอดภัย (popup) ----
+    + '.vc-seal{display:flex;align-items:center;gap:10px;text-align:left;margin:14px 0 2px;padding:11px 13px;background:rgba(66,214,138,.08);border:1px solid rgba(66,214,138,.30);border-radius:13px}'
+    + '.vc-seal svg{width:32px;height:32px;flex:0 0 auto;fill:#42d68a}'
+    + '.vc-seal b{display:block;font-size:.84rem;font-weight:700;color:#eafaf1}'
+    + '.vc-seal small{display:block;font-size:.7rem;color:#9fb8ac;line-height:1.5;margin-top:2px}'
+    // ---- โล่เล็กบนแถบ (bar) ----
+    + '#vc-bar .vb-sh{width:13px;height:13px;fill:#42d68a;vertical-align:-2px;margin-right:4px}'
     + '.vc-dlic{width:16px;height:16px;fill:currentColor;flex:0 0 auto}'
     + '.vc-pop-cta .vc-dlic{width:19px;height:19px}'
     // ---- แถบชวนติดตั้งด้านบน ----
@@ -160,6 +167,7 @@ add_action('wp_head', function () use ($VISION_CTA) {
       + '<h3>ติดตั้งแอป</h3>'
       + '<p>เข้าเล่นเร็วขึ้น · ติดตั้งไว้หน้าจอโฮม<br>ไม่ต้องพิมพ์ลิงก์ทุกครั้ง</p>'
       + '<a class="vc-pop-cta" href="' + CFG.install_url + '" target="_blank" rel="noopener"><svg class="vc-dlic" viewBox="0 0 24 24"><path d="M12 3a1 1 0 0 1 1 1v9.59l3.29-3.3a1 1 0 1 1 1.42 1.42l-5 5a1 1 0 0 1-1.42 0l-5-5a1 1 0 1 1 1.42-1.42L11 13.59V4a1 1 0 0 1 1-1zM5 19a1 1 0 0 1 1-1h12a1 1 0 1 1 0 2H6a1 1 0 0 1-1-1z"></path></svg>ติดตั้งเลย</a>'
+      + '<div class="vc-seal"><svg viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 8.5 8 11 4.6-2.5 8-6 8-11V5l-8-3zm-1.2 13.2L7.4 11.8l1.4-1.4 2 2 4.4-4.4 1.4 1.4-5.8 5.8z"></path></svg><div><b>ปลอดภัย 100% · ตรวจสอบแล้ว</b><small>ไม่ผ่าน App Store · ไม่มีไวรัส · ถอนได้ทุกเมื่อ</small></div></div>'
       + '<button class="vc-pop-later" type="button">ไว้ทีหลัง</button>'
       + '<p class="vc-pop-note">เมื่อติดตั้งแล้ว หน้าต่างนี้จะไม่แสดงอีก</p></div>';
     document.body.appendChild(ov);
@@ -178,7 +186,7 @@ add_action('wp_head', function () use ($VISION_CTA) {
       if (inst && Date.now() - inst < (CFG.installed_days || 30) * 86400000) return; } catch (e) {}   // ⭐ ยังไม่ติดตั้ง = โชว์ bar ทุกครั้ง (ปิด X แล้วรีเฟรชกลับมา เหมือน popup) · เงียบเมื่อกดติดตั้ง
     var bar = document.createElement('div'); bar.id = 'vc-bar';
     bar.innerHTML = '<span class="vb-ic-img" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M17 1.01 7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"></path></svg></span>'
-      + '<div class="vb-tx"><b>เพิ่มแอปไปหน้าจอโฮม</b><i>เข้าถึงสะดวก รวดเร็ว ไม่ต้องพิมพ์ลิงก์</i></div>'
+      + '<div class="vb-tx"><b>เพิ่มแอปไปหน้าจอโฮม</b><i><svg class="vb-sh" viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 8.5 8 11 4.6-2.5 8-6 8-11V5l-8-3zm-1.2 13.2L7.4 11.8l1.4-1.4 2 2 4.4-4.4 1.4 1.4-5.8 5.8z"></path></svg>ปลอดภัย 100% · ไม่ต้องพิมพ์ลิงก์</i></div>'
       + '<a class="vb-cta" href="' + CFG.install_url + '" target="_blank" rel="noopener"><svg class="vc-dlic" viewBox="0 0 24 24"><path d="M12 3a1 1 0 0 1 1 1v9.59l3.29-3.3a1 1 0 1 1 1.42 1.42l-5 5a1 1 0 0 1-1.42 0l-5-5a1 1 0 1 1 1.42-1.42L11 13.59V4a1 1 0 0 1 1-1zM5 19a1 1 0 0 1 1-1h12a1 1 0 1 1 0 2H6a1 1 0 0 1-1-1z"></path></svg>ติดตั้งแอป</a>'
       + '<button class="vb-x" type="button" aria-label="ปิด">&times;</button>';
     document.body.insertBefore(bar, document.body.firstChild);   // วางบนสุดในสายเนื้อหา (เลื่อนลงแล้วหายไป ไม่ทับ header)
