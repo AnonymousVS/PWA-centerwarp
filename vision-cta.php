@@ -2,7 +2,7 @@
 /*
 Plugin Name: Vision CTA Install Button + Popup
 Description: ปุ่มลอย "ติดตั้งแอป" (แท็บทอง) + popup เด้งกลางจอชวนติดตั้ง → centerwarp — static 100% imunify-safe
-Version: 2.8
+Version: 2.9
 Text Domain: vision-cta
 */
 if (!defined('ABSPATH')) { return; }
@@ -121,8 +121,12 @@ add_action('wp_head', function () use ($VISION_CTA) {
     + '.vc-dlic{width:16px;height:16px;fill:currentColor;flex:0 0 auto}'
     + '.vc-pop-cta .vc-dlic{width:19px;height:19px}'
     // ---- แถบชวนติดตั้งด้านบน ----
-    + '#vc-bar{position:relative;z-index:2147483000;display:flex;align-items:center;gap:9px;font-family:"Prompt","Sarabun",sans-serif;'
+    + '#vc-bar{position:fixed;top:0;left:0;right:0;z-index:2147483000;display:flex;align-items:center;gap:9px;font-family:"Prompt","Sarabun",sans-serif;'
     + 'padding:5px 12px;background:#000}'
+    // ⭐ v2.9: แถบติดบน (sticky) — ดันทั้งหน้า + ดันหัวเมนู Blocksy ที่ sticky ให้ลงมาอยู่ใต้แถบ (ไม่กินเมนู)
+    // ใช้ selector + ตัวแปรของ Blocksy เอง (data-sticky=yes/fixed) → theme-native ไม่ต้อง JS ตอน scroll · scope ใต้ html.vc-bar-on เฉพาะตอนแถบโชว์
+    + 'html.vc-bar-on{padding-top:var(--vc-bar-h,0px)!important}'
+    + 'html.vc-bar-on [data-sticky*="yes"],html.vc-bar-on [data-sticky*="fixed"]{top:calc(var(--vc-bar-h,0px) + var(--admin-bar,0px) + var(--theme-frame-size,0px))!important}'
     + '#vc-bar .vb-ic-img{flex:0 0 auto;display:flex;align-items:center;color:#c1a058}'
     + '#vc-bar .vb-ic-img svg{display:block;width:22px;height:22px;fill:currentColor}'
     + '#vc-bar .vb-tx{flex:1;min-width:0;color:#fff;line-height:1.2}'
@@ -189,9 +193,23 @@ add_action('wp_head', function () use ($VISION_CTA) {
       + '<div class="vb-tx"><b>เพิ่มแอปไปหน้าจอโฮม</b><i><svg class="vb-sh" viewBox="0 0 24 24"><path d="M12 2 4 5v6c0 5 3.4 8.5 8 11 4.6-2.5 8-6 8-11V5l-8-3zm-1.2 13.2L7.4 11.8l1.4-1.4 2 2 4.4-4.4 1.4 1.4-5.8 5.8z"></path></svg>ปลอดภัย 100% · ไม่ต้องพิมพ์ลิงก์</i></div>'
       + '<a class="vb-cta" href="' + CFG.install_url + '" target="_blank" rel="noopener"><svg class="vc-dlic" viewBox="0 0 24 24"><path d="M12 3a1 1 0 0 1 1 1v9.59l3.29-3.3a1 1 0 1 1 1.42 1.42l-5 5a1 1 0 0 1-1.42 0l-5-5a1 1 0 1 1 1.42-1.42L11 13.59V4a1 1 0 0 1 1-1zM5 19a1 1 0 0 1 1-1h12a1 1 0 1 1 0 2H6a1 1 0 0 1-1-1z"></path></svg>ติดตั้งแอป</a>'
       + '<button class="vb-x" type="button" aria-label="ปิด">&times;</button>';
-    document.body.insertBefore(bar, document.body.firstChild);   // วางบนสุดในสายเนื้อหา (เลื่อนลงแล้วหายไป ไม่ทับ header)
+    document.body.insertBefore(bar, document.body.firstChild);   // วางบนสุด (ตอนนี้ fixed = ติดบนตลอด ตามเลื่อนลงมา)
+
+    // ⭐ v2.9: แถบ sticky ติดบน — วัดความสูงแถบใส่ตัวแปร --vc-bar-h + ติดคลาส html.vc-bar-on
+    // (CSS ดันหน้า + ดันหัวเมนู Blocksy [data-sticky=yes] ลงใต้แถบเอง · re-measure เผื่อฟอนต์ Prompt โหลดเสร็จความสูงเปลี่ยน)
+    function vcBarFit() {
+      var bh = bar.getBoundingClientRect().height;
+      if (bh) document.documentElement.style.setProperty('--vc-bar-h', bh + 'px');
+    }
+    document.documentElement.classList.add('vc-bar-on');
+    vcBarFit();
+    setTimeout(vcBarFit, 400); setTimeout(vcBarFit, 1500);
+    window.addEventListener('resize', vcBarFit, { passive: true });
+
     function closeBar() {
       if (bar.parentNode) bar.parentNode.removeChild(bar);   // ปิดเฉพาะครั้งนี้ (ไม่จำ) → รีเฟรชกลับมา เหมือน popup
+      document.documentElement.classList.remove('vc-bar-on');          // คืนพื้นที่ + คืนตำแหน่งหัวเมนู
+      document.documentElement.style.removeProperty('--vc-bar-h');
     }
     bar.querySelector('.vb-x').addEventListener('click', closeBar);
     bar.querySelector('.vb-cta').addEventListener('click', markInstalled);
